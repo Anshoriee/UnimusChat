@@ -1,4 +1,4 @@
-# 💬 KampusChat
+# 💬 UnimusChat
 
 Aplikasi chat real-time eksklusif untuk mahasiswa dan alumni universitas dengan fitur messaging, group chat, dan user status management.
 
