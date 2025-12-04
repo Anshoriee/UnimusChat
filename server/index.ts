@@ -62,11 +62,15 @@ app.use((req, res, next) => {
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
   const port = parseInt(process.env.PORT || '5000', 10);
-  server.listen({
-    port,
-    host: "0.0.0.0",
-    reusePort: true,
-  }, () => {
+  const listenOptsWithReuse = { port, host: "0.0.0.0", reusePort: true } as any;
+  const listenOptsWithoutReuse = { port, host: "0.0.0.0" } as any;
+
+  const onListen = () => {
     log(`serving on port ${port}`);
-  });
+  };
+
+  // Some platforms (or environments) do not support `reusePort`. For
+  // development and local runs it's safe to listen without it. Use the
+  // simpler call to avoid ENOTSUP errors.
+  server.listen(listenOptsWithoutReuse, onListen);
 })();
