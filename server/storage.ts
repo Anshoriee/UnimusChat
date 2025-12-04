@@ -15,11 +15,11 @@ import {
   type InsertStatusUpdate,
   type ChatMember
 } from "@shared/schema";
-import { db } from "./db";
+import * as dbModule from "./db";
 import { eq, and, desc, sql, lt } from "drizzle-orm";
 import session, { Store } from "express-session";
 import connectPg from "connect-pg-simple";
-import { pool } from "./db";
+const { db, pool } = dbModule as any;
 
 const PostgresSessionStore = connectPg(session);
 
