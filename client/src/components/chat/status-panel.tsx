@@ -79,15 +79,24 @@ export function StatusPanel() {
   };
 
   return (
-    <aside className="w-80 bg-card border-l border-border flex flex-col">
-      {/* Panel Header */}
-      <div className="p-4 border-b border-border">
+    <aside className="w-96 bg-gradient-to-b from-background to-background/95 border-l border-gray-200 dark:border-secondary/30 flex flex-col shadow-lg">
+      {/* Panel Header - Modern */}
+      <div className="p-6 bg-gradient-to-r from-accent/80 to-accent/60 border-b border-accent/20">
         <div className="flex items-center justify-between">
-          <h3 className="font-semibold text-foreground">Status & Info</h3>
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+              <Clock className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <h3 className="font-bold text-white text-lg">Status & Info</h3>
+              <p className="text-sm text-white/70">Expires in 24h</p>
+            </div>
+          </div>
           <Button
             variant="ghost"
             size="sm"
             onClick={() => refetch()}
+            className="text-white hover:bg-white/20"
             data-testid="button-refresh-status"
           >
             <RefreshCw className="w-4 h-4" />
@@ -95,192 +104,137 @@ export function StatusPanel() {
         </div>
       </div>
 
-      <ScrollArea className="flex-1">
-        {/* Status Updates Section */}
-        <div className="p-4">
-          <div className="flex items-center justify-between mb-3">
-            <h4 className="font-medium text-foreground">Status Terkini</h4>
-            <Dialog open={isAddStatusOpen} onOpenChange={setIsAddStatusOpen}>
-              <DialogTrigger asChild>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  data-testid="button-add-status"
-                >
-                  <Plus className="w-4 h-4 mr-1" />
-                  Tambah
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Tambah Status</DialogTitle>
-                </DialogHeader>
-                <form onSubmit={handleAddStatus} className="space-y-4">
-                  <div>
-                    <Label htmlFor="status-content">Konten Status</Label>
-                    <Textarea
-                      id="status-content"
-                      placeholder="Apa yang kamu lakukan hari ini?"
-                      value={statusContent}
-                      onChange={(e) => setStatusContent(e.target.value)}
-                      maxLength={280}
-                      data-testid="textarea-status-content"
-                    />
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Status akan hilang otomatis dalam 24 jam ({280 - statusContent.length} karakter tersisa)
+      <ScrollArea className="flex-1 bg-gradient-to-b from-background/50 to-transparent">
+        <div className="p-6 space-y-6">
+          {/* Add Status Button */}
+          <Dialog open={isAddStatusOpen} onOpenChange={setIsAddStatusOpen}>
+            <DialogTrigger asChild>
+              <Button 
+                className="w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-white shadow-lg transition-all hover:shadow-xl"
+                data-testid="button-add-status"
+              >
+                <Plus className="w-5 h-5 mr-2" />
+                Posting Status Baru
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="bg-gradient-to-br from-background to-background/95 border-gray-200 dark:border-secondary/30">
+              <DialogHeader>
+                <DialogTitle className="text-xl font-bold">Bagikan Status</DialogTitle>
+              </DialogHeader>
+              <form onSubmit={handleAddStatus} className="space-y-5">
+                <div>
+                  <Label htmlFor="status-content" className="text-base font-semibold mb-3 block">Apa yang kamu lakukan?</Label>
+                  <Textarea
+                    id="status-content"
+                    placeholder="Bagikan momen asik kamu... 📸✨"
+                    value={statusContent}
+                    onChange={(e) => setStatusContent(e.target.value)}
+                    maxLength={280}
+                    className="bg-white dark:bg-secondary/40 border-gray-200 dark:border-secondary/30 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent min-h-24 resize-none"
+                    data-testid="textarea-status-content"
+                  />
+                  <p className="text-xs text-muted-foreground mt-2 flex justify-between">
+                    <span>Status akan hilang otomatis dalam 24 jam</span>
+                    <span className={statusContent.length > 260 ? "text-orange-500" : "text-muted-foreground"}>
+                      {280 - statusContent.length} / 280
+                    </span>
+                  </p>
+                </div>
+                
+                <div>
+                  <Label htmlFor="status-image" className="text-base font-semibold mb-3 block">Tambah Gambar</Label>
+                  <div className="border-2 border-dashed border-primary/30 rounded-xl p-6 text-center hover:border-primary/60 hover:bg-primary/5 transition-all cursor-pointer relative">
+                    <Upload className="w-8 h-8 text-primary/60 mx-auto mb-2" />
+                    <p className="text-sm font-medium text-foreground mb-1">
+                      {statusImage ? "✅ " + statusImage.name : "Pilih gambar atau drag-drop"}
                     </p>
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="status-image">Tambah Gambar (opsional)</Label>
-                    <div className="border-2 border-dashed border-border rounded-lg p-4 text-center">
-                      <Upload className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-                      <p className="text-sm text-muted-foreground mb-2">
-                        {statusImage ? statusImage.name : "Klik untuk upload gambar"}
-                      </p>
-                      <Input
-                        id="status-image"
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageUpload}
-                        className="hidden"
-                        data-testid="input-status-image"
-                      />
-                      <Button 
-                        type="button" 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => document.getElementById("status-image")?.click()}
-                      >
-                        Pilih File
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  <div className="flex space-x-3">
+                    <p className="text-xs text-muted-foreground">Max 10 MB</p>
+                    <Input
+                      id="status-image"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                      data-testid="input-status-image"
+                    />
                     <Button 
                       type="button" 
-                      variant="outline" 
-                      className="flex-1"
-                      onClick={() => setIsAddStatusOpen(false)}
-                    >
-                      Batal
-                    </Button>
-                    <Button 
-                      type="submit" 
-                      className="flex-1"
-                      disabled={!statusContent.trim() || addStatusMutation.isPending}
-                      data-testid="button-submit-status"
-                    >
-                      {addStatusMutation.isPending ? "Posting..." : "Posting"}
-                    </Button>
+                      variant="ghost"
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                      onClick={() => document.getElementById("status-image")?.click()}
+                    />
                   </div>
-                </form>
-              </DialogContent>
-            </Dialog>
-          </div>
+                </div>
+                
+                <Button 
+                  type="submit" 
+                  disabled={!statusContent.trim() || addStatusMutation.isPending}
+                  className="w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-white h-11 font-semibold transition-all"
+                  data-testid="button-submit-status"
+                >
+                  {addStatusMutation.isPending ? "Posting..." : "Posting Status"}
+                </Button>
+              </form>
+            </DialogContent>
+          </Dialog>
 
-          <div className="space-y-3">
-            {statuses.map((status) => (
-              <Card key={status.id} className="bg-muted/30 border-border" data-testid={`status-${status.id}`}>
-                <CardContent className="p-3">
-                  <div className="flex items-start space-x-3">
-                    <Avatar className="w-10 h-10">
-                      <AvatarImage src={status.user?.avatar || undefined} />
-                      <AvatarFallback>
-                        {status.user?.name?.charAt(0).toUpperCase() || "?"}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between mb-1">
-                        <h5 className="font-medium text-sm text-foreground" data-testid={`text-status-author-${status.id}`}>
-                          {status.user?.name || "Unknown User"}
-                        </h5>
-                        <div className="flex items-center space-x-1 text-xs text-muted-foreground">
-                          <Clock className="w-3 h-3" />
-                          <span data-testid={`text-status-time-${status.id}`}>
-                            {formatDistanceToNow(new Date(status.expiresAt), { 
-                              addSuffix: true, 
-                              locale: id 
-                            })}
-                          </span>
+          {/* Status Updates List */}
+          <div>
+            <h4 className="font-bold text-foreground mb-4 flex items-center space-x-2">
+              <div className="w-1 h-6 bg-gradient-to-b from-primary to-accent rounded-full"></div>
+              <span>Status Terkini</span>
+            </h4>
+            
+            {statuses.length === 0 ? (
+              <div className="text-center py-8">
+                <Clock className="w-12 h-12 text-muted-foreground/30 mx-auto mb-3" />
+                <p className="text-sm text-muted-foreground">Belum ada status</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {statuses.map((status) => (
+                  <div
+                    key={status.id}
+                    className="group rounded-2xl bg-white dark:bg-secondary/30 border border-gray-200 dark:border-secondary/40 overflow-hidden hover:shadow-lg transition-all duration-200 animate-fade-in"
+                    data-testid={`status-item-${status.id}`}
+                  >
+                    <div className="p-4">
+                      <div className="flex items-start space-x-3 mb-3">
+                        <Avatar className="w-10 h-10 border-2 border-primary/30">
+                          <AvatarImage src={status.user?.avatar || undefined} />
+                          <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-white font-bold">
+                            {status.user?.name?.charAt(0).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold text-foreground text-sm">
+                            {status.user?.name || "Anonymous"}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {formatDistanceToNow(new Date(status.createdAt), { addSuffix: true, locale: id })}
+                          </p>
+                        </div>
+                        <div className="px-2 py-1 bg-orange-100 dark:bg-orange-500/20 rounded-full">
+                          <p className="text-xs font-semibold text-orange-700 dark:text-orange-300">24h</p>
                         </div>
                       </div>
                       
-                      <p className="text-sm text-muted-foreground mb-1" data-testid={`text-status-pin-${status.id}`}>
-                        {status.user?.pin}
-                      </p>
-                      
-                      <p className="text-sm text-foreground" data-testid={`text-status-content-${status.id}`}>
+                      <p className="text-sm text-foreground leading-relaxed mb-3">
                         {status.content}
                       </p>
                       
                       {status.imageUrl && (
-                        <img 
-                          src={status.imageUrl} 
-                          alt="Status" 
-                          className="mt-2 rounded w-full h-auto max-h-40 object-cover cursor-pointer hover:opacity-90 transition-opacity"
-                          data-testid={`img-status-image-${status.id}`}
+                        <img
+                          src={status.imageUrl}
+                          alt="Status"
+                          className="w-full rounded-lg mb-3 max-h-48 object-cover"
                         />
                       )}
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
-            
-            {statuses.length === 0 && (
-              <div className="text-center py-8">
-                <Clock className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-                <p className="text-muted-foreground">Belum ada status terbaru</p>
+                ))}
               </div>
             )}
-          </div>
-        </div>
-
-        {/* Broadcast Messages Section */}
-        <div className="border-t border-border p-4">
-          <h4 className="font-medium text-foreground mb-3">Pengumuman Kampus</h4>
-          
-          <div className="space-y-3">
-            {/* Mock broadcast for demo */}
-            <Card className="bg-primary/5 border-primary/20">
-              <CardContent className="p-3">
-                <div className="flex items-start space-x-3">
-                  <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
-                    <Radio className="w-4 h-4 text-primary-foreground" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between mb-1">
-                      <h5 className="font-medium text-sm text-primary">BEM UNIMUS</h5>
-                      <span className="text-xs text-muted-foreground">2h lalu</span>
-                    </div>
-                    <p className="text-sm text-foreground">
-                      Pendaftaran beasiswa PPA dibuka hingga 15 Desember 2024. Info lengkap di website kampus.
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-accent/5 border-accent/20">
-              <CardContent className="p-3">
-                <div className="flex items-start space-x-3">
-                  <div className="w-8 h-8 bg-accent rounded-full flex items-center justify-center flex-shrink-0">
-                    <Radio className="w-4 h-4 text-accent-foreground" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between mb-1">
-                      <h5 className="font-medium text-sm text-accent">Admin Akademik</h5>
-                      <span className="text-xs text-muted-foreground">5h lalu</span>
-                    </div>
-                    <p className="text-sm text-foreground">
-                      Jadwal ujian akhir semester telah dipublikasi. Silahkan cek portal akademik.
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
           </div>
         </div>
       </ScrollArea>

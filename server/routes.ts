@@ -40,6 +40,7 @@ export function registerRoutes(app: Express): Server {
   // Chat routes
   app.get("/api/chats", requireAuth, async (req, res) => {
     try {
+      if (!req.user) return res.status(401).json({ message: "Unauthorized" });
       const chats = await storage.getUserChats(req.user.id);
       res.json(chats);
     } catch (error) {
@@ -49,6 +50,7 @@ export function registerRoutes(app: Express): Server {
 
   app.post("/api/chats", requireAuth, async (req, res) => {
     try {
+      if (!req.user) return res.status(401).json({ message: "Unauthorized" });
       const { name, type, description } = req.body;
       
       const chat = await storage.createChat({
@@ -107,6 +109,7 @@ export function registerRoutes(app: Express): Server {
 
   app.post("/api/status", requireAuth, upload.single("image"), async (req, res) => {
     try {
+      if (!req.user) return res.status(401).json({ message: "Unauthorized" });
       const { content } = req.body;
       
       const statusData = {

@@ -92,53 +92,61 @@ export function ChatSidebar({ selectedChatId, onSelectChat }: ChatSidebarProps) 
   if (!user) return null;
 
   return (
-    <aside className="w-80 bg-card border-r border-border flex flex-col">
-      {/* User Profile Header */}
-      <div className="p-4 border-b border-border">
-        <div className="flex items-center space-x-3 mb-4">
-          <Avatar className="w-12 h-12">
-            <AvatarImage src={user.avatar || undefined} />
-            <AvatarFallback>{user.name.charAt(0).toUpperCase()}</AvatarFallback>
-          </Avatar>
-          <div className="flex-1">
-            <div className="flex items-center space-x-2">
-              <h3 className="font-semibold text-foreground" data-testid="text-user-name">
-                {user.name}
-              </h3>
-              <div className="w-2 h-2 bg-accent rounded-full"></div>
+    <aside className="w-96 bg-gradient-to-b from-secondary via-secondary/95 to-secondary border-r border-secondary/20 flex flex-col text-white shadow-xl">
+      {/* User Profile Header with Gradient */}
+      <div className="relative p-6 bg-gradient-to-br from-secondary to-secondary/80 rounded-b-2xl border-b border-secondary/30 animate-fade-in">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16 blur-2xl"></div>
+        <div className="relative">
+          <div className="flex items-center space-x-4 mb-4">
+            <Avatar className="w-14 h-14 border-4 border-white/30 shadow-lg">
+              <AvatarImage src={user.avatar || undefined} />
+              <AvatarFallback className="bg-gradient-to-br from-accent to-primary text-white font-bold text-lg">
+                {user.name.charAt(0).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center space-x-2">
+                <h3 className="font-bold text-white text-lg" data-testid="text-user-name">
+                  {user.name}
+                </h3>
+                <div className="w-2.5 h-2.5 bg-green-400 rounded-full animate-pulse-glow"></div>
+              </div>
+              <p className="text-sm text-white/80 font-mono tracking-wider" data-testid="text-user-pin">
+                {user.pin}
+              </p>
+              <p className="text-xs text-white/70" data-testid="text-user-role">
+                <span className="inline-block px-2 py-0.5 rounded-full bg-white/10 backdrop-blur-sm">
+                  {user.role === "mahasiswa" ? "👨‍🎓 Mahasiswa" : user.role === "alumni" ? "🎓 Alumni" : "👨‍🏫 Dosen"}
+                  {user.program && ` • ${user.program}`}
+                </span>
+              </p>
             </div>
-            <p className="text-sm text-muted-foreground font-mono" data-testid="text-user-pin">
-              {user.pin}
-            </p>
-            <p className="text-xs text-muted-foreground" data-testid="text-user-role">
-              {user.role === "mahasiswa" ? "Mahasiswa" : user.role === "alumni" ? "Alumni" : "Dosen"} 
-              {user.program && ` - ${user.program}`}
-            </p>
           </div>
-        </div>
-        
-        <div className="flex space-x-2">
+          
           <Button
             variant="outline"
             size="sm"
-            className="flex-1"
+            className="w-full bg-white/10 hover:bg-white/20 border-white/30 text-white hover:text-white backdrop-blur-sm transition-all duration-200"
             onClick={() => logoutMutation.mutate()}
             disabled={logoutMutation.isPending}
             data-testid="button-logout"
           >
             <Users className="w-4 h-4 mr-2" />
-            Logout
+            {logoutMutation.isPending ? "Logging out..." : "Logout"}
           </Button>
         </div>
       </div>
 
-      {/* Navigation Tabs */}
-      <div className="border-b border-border">
-        <nav className="flex">
+      {/* Navigation Tabs with Modern Design */}
+      <div className="border-b border-white/10 bg-secondary/50 backdrop-blur-sm">
+        <nav className="flex gap-1 p-1">
           <Button
-            variant={activeTab === "chats" ? "default" : "ghost"}
+            variant="ghost"
             size="sm"
-            className={cn("flex-1 rounded-none", activeTab === "chats" && "bg-primary/10")}
+            className={cn(
+              "flex-1 rounded-lg transition-all duration-200 text-white/70 hover:text-white",
+              activeTab === "chats" && "bg-gradient-to-r from-primary to-primary/80 text-white shadow-lg"
+            )}
             onClick={() => setActiveTab("chats")}
             data-testid="tab-chats"
           >
@@ -146,9 +154,12 @@ export function ChatSidebar({ selectedChatId, onSelectChat }: ChatSidebarProps) 
             Chat
           </Button>
           <Button
-            variant={activeTab === "broadcast" ? "default" : "ghost"}
+            variant="ghost"
             size="sm"
-            className={cn("flex-1 rounded-none", activeTab === "broadcast" && "bg-primary/10")}
+            className={cn(
+              "flex-1 rounded-lg transition-all duration-200 text-white/70 hover:text-white",
+              activeTab === "broadcast" && "bg-gradient-to-r from-primary to-primary/80 text-white shadow-lg"
+            )}
             onClick={() => setActiveTab("broadcast")}
             data-testid="tab-broadcast"
           >
@@ -156,9 +167,12 @@ export function ChatSidebar({ selectedChatId, onSelectChat }: ChatSidebarProps) 
             Broadcast
           </Button>
           <Button
-            variant={activeTab === "status" ? "default" : "ghost"}
+            variant="ghost"
             size="sm"
-            className={cn("flex-1 rounded-none", activeTab === "status" && "bg-primary/10")}
+            className={cn(
+              "flex-1 rounded-lg transition-all duration-200 text-white/70 hover:text-white",
+              activeTab === "status" && "bg-gradient-to-r from-primary to-primary/80 text-white shadow-lg"
+            )}
             onClick={() => setActiveTab("status")}
             data-testid="tab-status"
           >
@@ -168,72 +182,89 @@ export function ChatSidebar({ selectedChatId, onSelectChat }: ChatSidebarProps) 
         </nav>
       </div>
 
-      {/* Chat List */}
-      <div className="flex-1 overflow-y-auto">
-        {chats.map((chat) => (
-          <Card 
-            key={chat.id}
-            className={cn(
-              "m-2 cursor-pointer transition-colors hover:bg-muted/50",
-              selectedChatId === chat.id && "ring-2 ring-primary"
-            )}
-            onClick={() => onSelectChat(chat.id)}
-            data-testid={`chat-item-${chat.id}`}
-          >
-            <CardContent className="p-3">
+      {/* Chat List - Scrollable */}
+      <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent">
+        {chats.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-full text-white/60 p-4 text-center">
+            <MessageCircle className="w-16 h-16 mb-4 opacity-30" />
+            <p className="text-sm">Belum ada chat</p>
+            <p className="text-xs mt-2 opacity-70">Tambahkan kontak untuk memulai</p>
+          </div>
+        ) : (
+          chats.map((chat) => (
+            <div
+              key={chat.id}
+              className={cn(
+                "mx-3 my-2 p-4 rounded-xl cursor-pointer transition-all duration-200 animate-slide-in",
+                "bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20",
+                selectedChatId === chat.id && "bg-gradient-to-r from-primary/40 to-primary/20 border-primary/50 ring-2 ring-primary/40 shadow-lg"
+              )}
+              onClick={() => onSelectChat(chat.id)}
+              data-testid={`chat-item-${chat.id}`}
+            >
               <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
+                <div className={cn(
+                  "w-12 h-12 rounded-full flex items-center justify-center font-bold text-white shadow-md transition-all",
+                  chat.type === "group" 
+                    ? "bg-gradient-to-br from-accent to-primary" 
+                    : "bg-gradient-to-br from-teal-400 to-blue-500"
+                )}>
                   {chat.type === "group" ? (
-                    <Users className="w-6 h-6 text-primary-foreground" />
+                    <Users className="w-6 h-6" />
                   ) : (
-                    <MessageCircle className="w-6 h-6 text-primary-foreground" />
+                    <MessageCircle className="w-6 h-6" />
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h4 className="font-medium text-foreground truncate" data-testid={`text-chat-name-${chat.id}`}>
+                  <h4 className="font-semibold text-white truncate text-sm" data-testid={`text-chat-name-${chat.id}`}>
                     {chat.name || "Unnamed Chat"}
                   </h4>
-                  <p className="text-sm text-muted-foreground truncate">
-                    {chat.type === "group" ? "Group Chat" : "Direct Message"}
+                  <p className="text-xs text-white/60 truncate">
+                    {chat.type === "group" ? "👥 Group Chat" : "💬 Direct Message"}
                   </p>
                 </div>
+                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse-glow" title="Online"></div>
               </div>
-            </CardContent>
-          </Card>
-        ))}
+            </div>
+          ))
+        )}
       </div>
 
-      {/* Add Contact Button */}
-      <div className="p-4 border-t border-border">
+      {/* Add Contact Button - Fixed at Bottom */}
+      <div className="p-4 border-t border-white/10 bg-secondary/50 backdrop-blur-sm">
         <Dialog open={isAddContactOpen} onOpenChange={setIsAddContactOpen}>
           <DialogTrigger asChild>
-            <Button className="w-full" data-testid="button-add-contact">
+            <Button 
+              className="w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-white shadow-lg transition-all duration-200 hover:shadow-xl"
+              data-testid="button-add-contact"
+            >
               <UserPlus className="w-4 h-4 mr-2" />
               Tambah Kontak dengan PIN
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="bg-gradient-to-br from-secondary/95 to-secondary/85 border-secondary/30 text-white">
             <DialogHeader>
-              <DialogTitle>Tambah Kontak Baru</DialogTitle>
+              <DialogTitle className="text-white">Tambah Kontak Baru</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
               <div>
-                <Label htmlFor="contact-pin">PIN Kontak</Label>
+                <Label htmlFor="contact-pin" className="text-white/90">PIN Kontak</Label>
                 <Input
                   id="contact-pin"
                   placeholder="Masukkan PIN (UNIMUS-XXXX)"
                   value={addContactPin}
                   onChange={(e) => setAddContactPin(e.target.value)}
+                  className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-primary focus:ring-primary"
                   data-testid="input-contact-pin"
                 />
               </div>
               <Button 
                 onClick={handleAddContact} 
-                disabled={!addContactPin.trim() || searchUserMutation.isPending}
-                className="w-full"
-                data-testid="button-search-contact"
+                disabled={searchUserMutation.isPending || createChatMutation.isPending}
+                className="w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-white"
+                data-testid="button-search-user"
               >
-                {searchUserMutation.isPending ? "Mencari..." : "Cari Kontak"}
+                {searchUserMutation.isPending ? "Mencari..." : "Cari & Tambahkan"}
               </Button>
             </div>
           </DialogContent>
