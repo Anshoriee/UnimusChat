@@ -244,17 +244,17 @@ export function ChatSidebar({ selectedChatId, onSelectChat }: ChatSidebarProps) 
           </DialogTrigger>
           <DialogContent className="bg-gradient-to-br from-secondary/95 to-secondary/85 border-secondary/30 text-white">
             <DialogHeader>
-              <DialogTitle className="text-white">Tambah Kontak Baru</DialogTitle>
+              <DialogTitle className="text-black">Tambah Kontak Baru</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
               <div>
-                <Label htmlFor="contact-pin" className="text-white/90">PIN Kontak</Label>
+                <Label htmlFor="contact-pin" className="text-black/90">PIN Kontak</Label>
                 <Input
                   id="contact-pin"
                   placeholder="Masukkan PIN (UNIMUS-XXXX)"
                   value={addContactPin}
                   onChange={(e) => setAddContactPin(e.target.value)}
-                  className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-primary focus:ring-primary"
+                  className="bg-white/10 border-black/20 text-black placeholder:text-black/50 focus:border-primary focus:ring-primary"
                   data-testid="input-contact-pin"
                 />
               </div>

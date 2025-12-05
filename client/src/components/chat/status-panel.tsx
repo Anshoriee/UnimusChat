@@ -88,8 +88,8 @@ export function StatusPanel() {
               <Clock className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h3 className="font-bold text-white text-lg">Status & Info</h3>
-              <p className="text-sm text-white/70">Expires in 24h</p>
+              <h3 className="font-bold text-black text-lg">Status & Info</h3>
+              <p className="text-sm text-black/70">Expires in 24h</p>
             </div>
           </div>
           <Button
